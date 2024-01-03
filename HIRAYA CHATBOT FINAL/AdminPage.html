@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Homepage</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADMINISTRATOR</title>
+    <link rel="stylesheet" href="Adminpage.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"/>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-firestore.js"></script>  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typed.js/2.0.11/typed.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/waypoints/4.0.1/jquery.waypoints.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/owl.carousel.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/OwlCarousel2/2.3.4/assets/owl.carousel.min.css"/>
+    <link rel="shortcut icon" href="HirayaNew.png" type="image/icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
+
+</head>
+<body>
+    <header class="fixed-top" style="background-color: #2b2d42;">
+        <nav class="container-xxl navbar navbar-expand-lg navbar-dark">
+            <div class="container-fluid">
+                <a class="navbar-brand fw-bold fs-3" href="#"><img style="height: 150px; width: 150px;" src="HirayaHD.png" alt="logo"></a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#Home">HOME</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#Analytics">ANALYTICS</a>
+                        </li>
+                        <li class="nav-item mx-2">
+                            <a class="nav-link" href="#messages">REVIEWS AND SUGGESTIONS</a>
+                        </li>
+                        <li class="nav-item mx-2"><a href="#" class="nav-link font-effect-neon" id="signButton"><span>SIGN OUT</span></a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+    </header>
+
+<!--- Home Section--->
+      <section class="home " id="Home">
+        <div class="max-width">
+            <div class="home-content">
+                <div class="text-1">Welcome</div>
+                <div class="text-2">ADMINISTRATOR</div>
+
+            </div>
+        </div>
+    </section>
+
+
+      <!-- Analytics -->
+      <section class="container2" id="Analytics">
+        <div>
+          <iframe class="spreadsheet-iframe" src="https://docs.google.com/spreadsheets/d/e/2PACX-1vTsui8GWgwipXBzyolgH_BiBjhFfDrHBbnm4JBzLaiUS0e3SKhNp9Dh_XlHuS_6v_5MuYrMBUwD-APX/pubhtml?widget=true&amp;headers=true"></iframe>
+        </div>
+      </section>
+
+      <!--- Messages and Feedbacks --->
+      <section class="container3" id="messages">
+        <table>
+          <thead>
+            <tr>
+              <th>First Name</th>
+              <th>Last Name</th>
+              <th>Email</th>
+              <th>Messages</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="contactData">
+            <!-- Table Data -->
+          </tbody>
+        </table>
+      </section>
+    
+      <!-- Firebase-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/7.14.1-0/firebase.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
+    
+      <script>
+        const firebaseConfig = {
+          apiKey: "AIzaSyBbpNyRMElS56frq-KibRnZHWhZDcG34GY",
+          authDomain: "hiraya--auth.firebaseapp.com",
+          databaseURL: "https://hiraya--auth-default-rtdb.firebaseio.com",
+          projectId: "hiraya--auth",
+          storageBucket: "hiraya--auth.appspot.com",
+          messagingSenderId: "120871344609",
+          appId: "1:120871344609:web:0ec5430a33f637e5749aa0"
+        };
+    
+        const firebaseApp = firebase.initializeApp(firebaseConfig);
+        const db = firebaseApp.database();
+        const contactData = document.getElementById("contactData");
+        const contactFormDB = db.ref('contactForm');
+    
+        contactFormDB.on('child_added', (snapshot) => {
+          const data = snapshot.val();
+          AddItemToTable(data.firstname, data.lastname, data.email, data.message, snapshot.key);
+        });
+    
+        function AddItemToTable(firstname, lastname, email, message, key) {
+          const newRow = contactData.insertRow();
+          const td1 = newRow.insertCell(0);
+          const td2 = newRow.insertCell(1);
+          const td3 = newRow.insertCell(2);
+          const td4 = newRow.insertCell(3);
+          const td5 = newRow.insertCell(4);
+    
+          td1.innerHTML = firstname;
+          td2.innerHTML = lastname;
+          td3.innerHTML = email;
+          td4.innerHTML = message;
+    
+          // Add "View" button
+          const viewButton = document.createElement("button");
+          viewButton.textContent = "View";
+          viewButton.className = "view-button";
+          viewButton.addEventListener("click", () => viewFeedback(key));
+    
+          // Add "Delete" button
+          const deleteButton = document.createElement("button");
+          deleteButton.textContent = "Delete";
+          deleteButton.className = "delete-button";
+          deleteButton.addEventListener("click", () => deleteFeedback(key));
+    
+          td5.appendChild(viewButton);
+          td5.appendChild(deleteButton);
+        }
+    
+        function viewFeedback(key) {
+          // View Function
+          const feedbackRef = contactFormDB.child(key);
+          feedbackRef.once('value', (snapshot) => {
+            const feedbackData = snapshot.val();
+            alert(`View Reviews:\n${JSON.stringify(feedbackData)}`);
+          });
+        }
+    
+        function deleteFeedback(key) {
+          // Delete Function
+          const feedbackRef = contactFormDB.child(key);
+          feedbackRef.remove();
+          
+          // Remove the corresponding row from the table
+          const row = document.querySelector(`[data-key="${key}"]`);
+          if (row) {
+            row.remove();
+          }
+
+          location.reload();
+        }
+      </script>
+
+
+      
+  <script>
+    const signButton = document.getElementById("signButton");
+    signButton.addEventListener('click', goToChatPage);
+    
+    function goToChatPage() {
+        window.location.href = 'Homepage.html'
+    }
+  </script>
+  
+    <script>
+      
+  document.addEventListener('DOMContentLoaded', function() {
+    var splashScreen = document.querySelector('.splash');
+    var mainContent = document.querySelector('#main-content');
+  
+   
+    splashScreen.addEventListener('animationend', function() {
+      
+      splashScreen.style.display = 'none';
+  
+      mainContent.style.display = 'block';
+    });
+  });
+    </script>
+
+
+  
+  
+</body>
+</html>
